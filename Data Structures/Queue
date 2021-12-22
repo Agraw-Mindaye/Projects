@@ -1,0 +1,267 @@
+#include <iostream>
+using namespace std;
+
+const int SIZE = 5;
+int Q[SIZE];
+int front = -1, rear = -1;
+int counter = 0;
+
+
+void create()
+{
+    if(counter != 0)
+    {
+        cout << "Queue has already been created" << endl << endl;
+    }
+    else
+    {
+        cout << "Queue is created" << endl << endl;
+        counter++;
+    }
+}
+
+bool Full()
+{
+    if((rear + 1)%SIZE == front)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool Empty()
+{
+    if(front == -1 && rear == -1)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void enque(int num)
+{
+    if(Full())
+    {
+        cout << "Queue is full" << endl;
+    }
+    else
+    {
+        if(front == -1)
+        {
+            front++;
+        }
+        rear = (rear + 1)%SIZE;
+        Q[rear] = num;
+    }
+    cout << endl;
+}
+
+void dequeue()
+{
+    if(front == rear)
+    {
+        front = -1;
+        rear = -1;
+    }
+    else
+    {
+        front++;
+    }
+    cout << endl;
+}
+
+void checkFront()
+{
+    cout << "Front: " << Q[front] << endl << endl;
+}
+
+void purge()
+{
+    front = -1;
+    rear = -1;
+    cout << "Queue has been purged" << endl << endl;
+}
+
+void display()
+{
+    if(Empty())
+    {
+        cout << "Queue is empty" << endl << endl;
+    }
+    else
+    {
+        if(front <= rear)
+        {
+            for(int i = front; i <= rear; i++)
+            {
+                cout << Q[i] << "   ";
+            }
+        }
+        else
+        {
+            int j = front;
+            while (j < SIZE)
+            {
+                cout << Q[j] << "   ";
+            }
+            while(j <= rear)
+            {
+                cout << Q[j] << " ";
+            }
+        }
+        cout << endl << endl;
+    }
+}
+
+void menu()
+{
+    cout << "Type 1 to create a Queue " << endl;
+    cout << "Type 2 to enqueue" << endl;
+    cout << "Type 3 to dequeue" << endl;
+    cout << "Type 4 to check the front" << endl;
+    cout << "Type 5 to check if queue is empty" << endl;
+    cout << "Type 6 to check if queue is full" << endl;
+    cout << "Type 7 to purge the queue" << endl;
+    cout << "Type 8 to exit" << endl;
+    cout << endl;
+}
+
+int main()
+{
+    int num;
+    int choice;
+
+    menu();
+
+    do
+    {
+        cout << "Choose an option from the menu: ";
+        cin >> choice;
+        switch(choice)
+        {
+            case 1:
+            { 
+                create();
+                menu();
+                break;
+            }
+            case 2:
+            {
+                if(Full())
+                {
+                    cout << "Cannot enq, queue is full" << endl;
+                    cout << "Queue: ";
+                    display();
+                }
+                else
+                {
+                    cout << "Enter a number to add to the queue: ";
+                    cin >> num;
+                    enque(num);
+                    cout << "Queue: ";
+                    display();
+                }
+                menu();
+                break;
+            }
+            case 3:
+            {
+                if(Empty())
+                {
+                    cout << "Cannot deq, queue is empty" << endl << endl;
+                }
+                else
+                {
+                    dequeue();
+                    cout << "Queue: ";
+                    display();
+                }
+                menu();
+                break;
+            }
+            case 4:
+            {
+                if(Empty())
+                {
+                    cout << "Cannot check front, queue is empty" << endl << endl;
+                }
+                else
+                {
+                    checkFront();
+                }
+                menu();
+                break;
+            }
+            case 5:
+            {
+                if(Empty())
+                {
+                    cout << "Yes, queue is empty" << endl << endl;
+                }
+                else
+                {
+                    cout << "No, queue is not empty" << endl;
+                    cout << "Queue: ";
+                    display();
+                }
+                menu();
+                break;
+            }
+            case 6:
+            {
+                if(Full())
+                {
+                    cout << "Yes, queue is full" << endl << endl;
+                    display();
+                }
+                else
+                {
+                    cout << "No, queue is not full" << endl;
+                    if(Empty())
+                    {
+                        cout << "Queue: (empty)" << endl << endl;
+                    }
+                    else
+                    {
+                        cout << "Queue: ";
+                        display();
+                    }
+                }
+                menu();
+                break;
+            }
+            case 7:
+            {
+                if(Empty())
+                {
+                    cout << "Cannot purge, queue is empty" << endl << endl;
+                }
+                else
+                {
+                    purge();
+                    cout << endl;
+                }
+                menu();
+                break;
+            }
+            case 8:
+            {
+                cout << "Exiting..." << endl;
+                break;
+            }
+            default: 
+            {
+                cout << "Error: Please choose an option from the menu" << endl;
+            }
+        }
+    }
+    while(choice != 8);
+
+    return 0;
+}
