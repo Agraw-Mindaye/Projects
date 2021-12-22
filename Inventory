@@ -1,0 +1,327 @@
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+using namespace std;
+
+struct Inventory
+{
+	char description[50]; 
+	int quantity;
+	double whole_cost;
+	double retail_cost;
+	int month;
+	int day;
+	int year;
+};
+
+void addRecord(string);
+void displayRecord(string);   
+void changeRecord(string);
+
+int main()
+{
+	int input;
+	int record = 1;
+	char yes_no;
+	
+	string file_name;
+	cout << "Enter a file name: ";
+	cin >> file_name;
+  	
+	//Menu for the user to choose a task
+	cout << "Choose an option 1-4" << endl;
+	cout << "1. Add a new record" << endl;
+	cout << "2. View an exisitng record" << endl;
+	cout << "3. Change an exisitng record" << endl;
+	cout << "4. Exit" << endl;
+	cout << endl;
+	cin >> input;
+  
+	while(input < 1 || input > 4)
+	{
+		cout << "ERROR!: You have entered an invalid number. Please enter a number betwwen 1 and 4: ";
+		cin >> input;
+	}
+	
+	//Exectues a function depending on user input
+	if(input == 1)
+	{
+		cout << "Record " << record++ << ": " << endl << endl;
+		addRecord(file_name);
+	}
+	else if(input == 2)
+	{
+		displayRecord(file_name);
+	}
+	else if(input == 3)
+	{
+		changeRecord(file_name);
+	}
+	else
+	{
+		cout << "Exiting" << endl;
+	}
+	
+	//Allows the user to return to the menu and choose another option
+	cout << "Would you like to return to the menu? Enter y for yes or n for no: ";
+	cin >> yes_no;
+	
+	//A while loop to allow the user to continuously return to the menu and select an option
+	while(yes_no == 'y')
+	{
+		cout << endl;
+		cout << "Choose an option 1-4" << endl;
+		cout << "1. Add a new record" << endl;
+		cout << "2. View an exisitng record" << endl;
+		cout << "3. Change an exisitng record" << endl;
+		cout << "4. Exit" << endl;
+		cout << endl;
+		cin >> input; 
+		
+		while(input < 1 || input > 4)
+		{
+			cout << "ERROR!: You have entered an invalid number. Please enter a number betwwen 1 and 4: ";
+			cin >> input;
+		}
+	
+		if(input == 1)
+		{
+			cout << "Record " << record++ << ": " << endl << endl;
+			addRecord(file_name);
+		}
+		else if(input == 2)
+		{
+			displayRecord(file_name);
+		}
+		else if(input == 3)
+		{
+			changeRecord(file_name);
+		}
+		else
+		{
+			cout << "Exiting" << endl;
+			break;
+		}
+		
+		cout << "Would you like to return to the menu? Enter y for yes or n for no: ";
+		cin >> yes_no;
+	}
+	
+	return 0;
+}
+
+	//Add a record to the file
+	void addRecord(string file_name)   
+	{
+		fstream inventoryFile(file_name.c_str(), ios::out | ios::binary | ios::app);
+		
+		Inventory data;
+		
+		cout << "Description: ";
+		cin.ignore();
+		cin.getline(data.description, 50);
+  
+		cout << "Quantity: ";
+		cin >> data.quantity;
+  
+		while (data.quantity < 0)
+		{
+			cout<<"ERROR: Quantity cannot be less than 0. Try again: ";
+			cin >> data.quantity;
+		}
+  
+		cout << "Wholesale cost: $";
+		cin >> data.whole_cost;
+  
+		while (data.whole_cost < 0)
+		{
+			cout<<"ERROR: Whole cost cannot be less than 0. Try again: ";
+			cin >> data.whole_cost;
+		}
+  
+		cout << "Retail cost: $";
+		cin >> data.retail_cost;
+  
+		while (data.retail_cost < 0)
+		{
+			cout<<"ERROR: Retail cost cannot be less than 0. Try again: ";
+			cin >> data.retail_cost;
+		}
+  
+		cout << "Now enter the date (as integers):" << endl;
+		cout << "Month: ";
+		cin >> data.month;
+  
+		while (data.month < 1 || data.month > 12)
+		{
+			cout << "ERROR: The month must be a number between 1-12. Try again: " << endl;
+			cout << "Month: ";
+			cin >> data.month;
+		}
+  
+		cout << "Day: ";
+		cin >> data.day;
+		
+		while (data.day < 1 || data.day > 31)
+		{
+			cout << "ERROR: The day must be a number between 1-31. Try again: " << endl;
+			cout << "Day: ";
+			cin >> data.day;
+		}
+  
+		cout << "Year: ";
+		cin >> data.year;
+		
+		while (data.year < 1950 || data.year > 2021)
+		{
+			cout << "ERROR: The year must be a number between 2000-2021. Try again: " << endl;
+			cout << "Year: ";
+			cin >> data.year;
+		}
+		
+		cout << endl;
+		
+		//Set the write postion to the end of the file
+		inventoryFile.seekp(sizeof(data), ios::end);
+		
+		//Writes data to the file
+		inventoryFile << "Description: " << data.description << endl;
+		inventoryFile << "Quantity: " << data.quantity << endl;
+		inventoryFile << "Wholesale Cost: $" << data.whole_cost << endl;
+		inventoryFile << "Retail Cost: $" << data.retail_cost << endl;
+		inventoryFile << "Date: " << data.month << "/" << data.day << "/" << data.year << endl << endl;
+		
+		inventoryFile.close();
+	}
+	
+	//Displays a record in the file
+	void displayRecord(string file_name)
+	{
+		int num_rec;
+		string input;
+		
+		fstream inventoryFile(file_name.c_str(), ios::in | ios::binary);
+		
+		cout << "Which record do you want to see? ";
+		cin >> num_rec;
+		
+		//Temporary structure to store the data of the requested record
+		Inventory temp_rec;
+		
+		//Set read position at the beginning of the requested record
+		inventoryFile.seekg((num_rec - 1) * sizeof(temp_rec), ios::beg);
+		
+		//Output requested record
+		for(int i = 0; i < 5; i++)
+		{
+			getline(inventoryFile, input);
+			cout << input << endl;
+		}
+		
+		cout << endl; 
+		
+		inventoryFile.close();
+	}
+	
+	//Change a record in the file
+	void changeRecord(string file_name)    
+	{
+		int num;
+		string input;
+  
+		fstream inventoryFile(file_name.c_str(), ios::in | ios::out | ios::binary);
+
+		cout << "Which record do you want to edit? ";
+		cin >> num;
+		
+		//Temporary structure to store the data of the requested record
+		Inventory temp_rec;
+  		
+  		//Set read position at the beginning of the requested record
+		inventoryFile.seekg((num - 1) * sizeof(temp_rec), ios::beg);
+		
+		//Output requested record
+		for(int i = 0; i < 5; i++)
+		{
+			getline(inventoryFile, input);
+			cout << input << endl;
+		}
+		
+		cout << endl;
+		cout << "Enter the new data:" << endl << endl;
+		cout << "Description: ";
+		cin.ignore();
+		cin.getline(temp_rec.description, 50);
+  
+		cout << "Quantity: ";
+		cin >> temp_rec.quantity;
+  
+		while (temp_rec.quantity < 0)
+		{
+			cout << "ERROR: Quantitiy cannot be less than 0. Try again: ";
+			cin >> temp_rec.quantity;
+		}
+  
+		cout << "Wholesale cost: $";
+		cin >> temp_rec.whole_cost;
+  
+		while (temp_rec.whole_cost < 0) 
+		{
+			cout << "ERROR: Wholesale cost cannot be less than 0. Try again: ";
+			cin >> temp_rec.whole_cost;
+		}
+  
+		cout << "Retail cost: $";
+		cin >> temp_rec.retail_cost;
+  
+		while (temp_rec.retail_cost < 0)
+		{
+			cout << "ERROR: Retail cost cannot be less than 0. Try again: ";
+			cin >> temp_rec.retail_cost;
+		}
+  
+		cout << "Month: ";
+		cin >> temp_rec.month;
+  
+		while (temp_rec.month < 1 || temp_rec.month > 12)
+		{
+			cout << "ERROR: The month must be a number between 1-12. Try again: " << endl;
+			cout << "Month: ";
+			cin >> temp_rec.month;
+		}
+	  
+		cout << "Day: ";
+		cin >> temp_rec.day;
+		
+		while (temp_rec.day < 1 || temp_rec.day > 31)
+		{
+			cout << "ERROR: The day must be a number between 1-31. Try again: " << endl;
+			cout << "Day: ";
+			cin >> temp_rec.day;
+		}
+  
+		cout << "Year: ";
+		cin >> temp_rec.year;
+		
+		while (temp_rec.year < 1950 || temp_rec.year > 2021)
+		{
+			cout<<"ERROR: The year must be betwwen 2000 and 2021. Try again: " << endl;
+			cout << "Year: ";
+			cin >> temp_rec.year;
+		}
+		
+		cout << endl;
+
+		//Set the write postion to the beginning of the requested record
+		inventoryFile.seekp((num - 1) * sizeof(temp_rec), ios::beg);
+
+		//Update the requested record with the new data
+		inventoryFile << "Description: " << temp_rec.description << endl;
+		inventoryFile << "Quantity: " << temp_rec.quantity << endl;
+		inventoryFile << "Wholesale Cost: $" << temp_rec.whole_cost << endl;
+		inventoryFile << "Retail Cost: $" << temp_rec.retail_cost << endl;
+		inventoryFile << "Date: " << temp_rec.month << "/" << temp_rec.day << "/" << temp_rec.year << endl << endl;
+		
+		inventoryFile.close();
+	}
+	
